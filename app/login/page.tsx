@@ -1,13 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
-import Link from 'next/link';
+import { useState } from 'react';
 import Image from 'next/image';
-import Navbar from '../components/Navbar';
 import { useRouter } from 'next/navigation';
+import Navbar from '../components/Navbar';
 
 const TwitterIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +23,6 @@ const TelegramIcon = () => (
   </svg>
 );
 
-
 function SocialLinks() {
   return (
     <div className="flex items-center justify-center space-x-4 mt-6">
@@ -44,38 +39,32 @@ function SocialLinks() {
   );
 }
 
-function WalletConnect() {
-  const { publicKey, connected } = useWallet();
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+function SimplifiedEntrance() {
   const router = useRouter();
+  const [isEntering, setIsEntering] = useState(false);
 
-  useEffect(() => {
-    if (connected && publicKey) {
-      setWalletAddress(publicKey.toString());
-
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 4000)
-    } else {
-      setWalletAddress(null);
-    }
-  }, [connected, publicKey, router]);
+  const handleEnter = () => {
+    setIsEntering(true);
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 500);
+  };
 
   return (
     <div className="w-full max-w-xl">
       <div className="flex flex-col items-center justify-center mb-8">
         <div>
-            <div className="flex items-center">
-                <div className="mr-2">
-                    <Image 
-                    src="/images/binoculars.svg" 
-                    alt="Whale Watcher Logo" 
-                    width={24} 
-                    height={24} 
-                    />
-                </div>
-                <h1 className="pixel-font text-xl font-bold">WHALE WATCHER</h1>
+          <div className="flex items-center">
+            <div className="mr-2">
+              <Image 
+                src="/images/binoculars.svg" 
+                alt="Whale Watcher Logo" 
+                width={24} 
+                height={24} 
+              />
             </div>
+            <h1 className="pixel-font text-xl font-bold">WHALE WATCHER</h1>
+          </div>
         </div>
         <p className="text-gray-200 text-lg uppercase text-center mb-8">
           FIND AND TRACK WALLET BEHAVIOUR<br />
@@ -83,79 +72,32 @@ function WalletConnect() {
         </p>
       </div>
 
-      {!connected ? (
-        <div className="flex justify-center">
-          <button 
-            className="border-2 border-orange-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-md flex items-center space-x-2 uppercase transition-colors cursor-pointer"
-            onClick={() => {
-              const walletButton = document.querySelector('.wallet-adapter-button');
-              if (walletButton instanceof HTMLElement) {
-                walletButton.click();
-              }
-            }}
-          >
-            <span className='text-white'>ENTER</span>
-                <img src="/images/Arrow - Right 3.png" alt="" className='bg-orange-600 rounded-sm'/>
-          </button>
-        </div>
-      ) : (
-        <div className="flex justify-center">
-          <div className="bg-gray-800 p-4 rounded-lg w-full max-w-md">
-            <p className="text-gray-400 text-sm mb-1">Connected Wallet</p>
-            <p className="text-white font-mono text-sm break-all">{walletAddress}</p>
-            <div className="mt-4">
-              <Link 
-                href="/dashboard"
-                className="block w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-center uppercase transition-colors"
-              >
-                Enter Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Hidden wallet connect button that will be triggered by our custom button */}
-      <div className="hidden">
-        <WalletMultiButton />
+      <div className="flex justify-center">
+        <button 
+          className={`border-2 border-orange-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-md flex items-center space-x-2 uppercase transition-colors cursor-pointer ${isEntering ? 'bg-gray-700' : ''}`}
+          onClick={handleEnter}
+          disabled={isEntering}
+        >
+          <span className='text-white'>ENTER</span>
+          <img src="/images/Arrow - Right 3.png" alt="" className='bg-orange-600 rounded-sm'/>
+        </button>
       </div>
     </div>
   );
 }
 
-interface WalletConfiguratorProps {
-  children: React.ReactNode;
-}
-
-const WalletConfigurator: React.FC<WalletConfiguratorProps> = ({ children }) => {
-  // Set up Solana network and wallet options
-  const wallets = [new PhantomWalletAdapter()];
-
-  return (
-    <ConnectionProvider 
-      endpoint={process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT || "https://api.mainnet-beta.solana.com"}
-    >
-      <WalletProvider wallets={wallets} autoConnect>
-        {children}
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-};
-
 export default function LogInPage() {
   return (
-    <WalletConfigurator>
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-gray-800">
-        <Navbar activePage="login" />
-        
-        <main className="flex-1 px-6 py-16 flex flex-col items-center justify-center">
-          <WalletConnect />
-        </main>
-        
-        <footer className="py-6">
-          <SocialLinks />
-        </footer>
-      </div>
-    </WalletConfigurator>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-gray-800">
+      <Navbar activePage="login" />
+      
+      <main className="flex-1 px-6 py-16 flex flex-col items-center justify-center">
+        <SimplifiedEntrance />
+      </main>
+      
+      <footer className="py-6">
+        <SocialLinks />
+      </footer>
+    </div>
   );
 }
