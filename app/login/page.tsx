@@ -7,7 +7,7 @@ import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-ad
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '../components/Navbar';
-
+import { useRouter } from 'next/navigation';
 
 const TwitterIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,15 +47,19 @@ function SocialLinks() {
 function WalletConnect() {
   const { publicKey, connected } = useWallet();
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Handle changes to wallet connection
   useEffect(() => {
     if (connected && publicKey) {
       setWalletAddress(publicKey.toString());
+
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 4000)
     } else {
       setWalletAddress(null);
     }
-  }, [connected, publicKey]);
+  }, [connected, publicKey, router]);
 
   return (
     <div className="w-full max-w-xl">
@@ -102,7 +106,7 @@ function WalletConnect() {
             <div className="mt-4">
               <Link 
                 href="/dashboard"
-                className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center uppercase transition-colors"
+                className="block w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-center uppercase transition-colors"
               >
                 Enter Dashboard
               </Link>
