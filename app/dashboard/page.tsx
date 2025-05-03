@@ -19,8 +19,8 @@ interface Transaction {
 }
 
 export default function DashboardPage() {
-  const [selectedWalletSize, setSelectedWalletSize] = useState('$50k+');
-  const [selectedPositionSize, setSelectedPositionSize] = useState('20 SOL');
+  const [selectedWalletSize, setSelectedWalletSize] = useState('$10k+');
+  const [selectedPositionSize, setSelectedPositionSize] = useState('5 SOL');
   const [customWalletSize, setCustomWalletSize] = useState('');
   const [customPositionSize, setCustomPositionSize] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,10 +40,10 @@ export default function DashboardPage() {
   const [recentOnly, setRecentOnly] = useState(true);
   
   const walletSizes = [
+    { value: '$10k+', label: '$10k+' },
+    { value: '$20k+', label: '$20k+' },
+    { value: '$30k+', label: '$30k+' },
     { value: '$50k+', label: '$50k+' },
-    { value: '$100k+', label: '$100k+' },
-    { value: '$500k+', label: '$500k+' },
-    { value: '$1M+', label: '$1M+' },
   ];
   
   const positionSizes = [
@@ -76,10 +76,10 @@ export default function DashboardPage() {
     if (walletSize === 'custom' && customWalletSize) return customWalletSize;
     
     switch (walletSize) {
+      case '$10k+': return '10000';
+      case '$20k+': return '20000';
+      case '$30k+': return '30000';
       case '$50k+': return '50000';
-      case '$100k+': return '100000';
-      case '$500k+': return '500000';
-      case '$1M+': return '1000000';
       default: return '0';
     }
   };
